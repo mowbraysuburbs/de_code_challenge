@@ -1,0 +1,35 @@
+import boto3
+import json
+import time
+import logging
+
+# Set up logging
+logging.basicConfig(
+    filename='logs/task1.log',
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s'
+)
+
+s3 = boto3.client('s3', region_name='af-south-1')
+
+start_time = time.time()
+
+response = s3.select_object_content(
+    Bucket='cct-ds-code-challenge-input-data',
+    Key='city-hex-polygons-8-10.geojson',
+    ExpressionType='SQL',
+    Expression="SELECT * FROM S3Object WHERE S3Object.properties.resolution = 8",
+    InputSerialization={'JSON': {'Type': 'DOCUMENT'}},
+    OutputSerialization={'JSON': {'RecordDelimiter': '\n'}}
+)
+
+# Parse the response
+records = []
+for event in response['Payload']:
+    if 'Records' in event:
+        data = event['Records']['Payload'].decode('utf-8')
+        records.append(data)
+
+elapsed = time.time() - start_time
+logging.info(f"S3 Select query completed in {elapsed:.2f} seconds")
+logging.info(f"Total records extracted: {len(records)}")

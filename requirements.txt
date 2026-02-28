@@ -1,1 +1,8 @@
 boto3
+pandas 
+geopandas 
+h3 
+shapely 
+jsonschema 
+pyarrow 
+fastparquet

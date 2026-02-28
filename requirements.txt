@@ -6,3 +6,4 @@ shapely
 jsonschema 
 pyarrow 
 fastparquet
+python-dotenv
